@@ -1,0 +1,1 @@
+# finops-aws-lightswitch-pattern
