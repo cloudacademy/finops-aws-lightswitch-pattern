@@ -68,7 +68,6 @@ invoke:
 		--function-name "${LAMBDA_NAME}" \
 		--region="${LAMBDA_REGION}" \
 		--cli-binary-format raw-in-base64-out \
-		--payload '{"queryStringParameters": {"num": "1000"}}' \
 		--log-type Tail \
 		out \
 		| jq ".LogResult" -r | base64 -d
