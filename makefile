@@ -1,4 +1,4 @@
-export LAMBDA_NAME=cloudacademy-calc-pi
+export LAMBDA_NAME=finops-lightswitch
 export LAMBDA_REGION=us-west-2
 export IAM_ROLE_ARN=TOKEN_IAM_ROLE_ARN
 export S3_BUCKET_NAME=TOKEN_S3_BUCKET_NAME
@@ -29,7 +29,6 @@ deploy: release.zip
 		--handler lambda_function.lambda_handler \
 		--role "${IAM_ROLE_ARN}" \
 		--environment '{"Variables":{"S3_BUCKET_NAME":"${S3_BUCKET_NAME}"}}' \
-		--tracing-config 'Mode=Active' \
 		--region "${LAMBDA_REGION}" \
 		| jq -r ".State"
 	@echo "lambda function created..."
@@ -37,19 +36,9 @@ deploy: release.zip
 		--function-name "${LAMBDA_NAME}" \
 		--region="${LAMBDA_REGION}"
 	@echo "lambda function is active..."
-	aws lambda create-function-url-config \
-		--function-name "${LAMBDA_NAME}" \
-		--auth-type "NONE" \
-		| jq -r ".FunctionUrl"
-	aws lambda add-permission \
-		--function-name "${LAMBDA_NAME}" \
-		--action lambda:InvokeFunctionUrl \
-		--principal "*" \
-		--statement-id "${LAMBDA_NAME}" \
-		--function-url-auth-type "NONE"
-	aws lambda wait function-updated \
-		--function-name "${LAMBDA_NAME}" \
-		--region="${LAMBDA_REGION}"
+	aws events put-rule \
+		--name "${LAMBDA_NAME}-event-trigger" \
+		--schedule-expression 'rate(2 minutes)'
 	@echo "lambda function is ready..."
 
 .PHONY: update
@@ -67,8 +56,8 @@ update: release.zip
 
 .PHONY: delete
 delete:
-	-aws lambda delete-function-url-config \
-		--function-name "${LAMBDA_NAME}"
+	-aws events delete-rule \
+		--name "${LAMBDA_NAME}-event-trigger"
 	-aws lambda delete-function \
 		--function-name "${LAMBDA_NAME}"
 	@echo "lambda function is deleted..."
