@@ -2,6 +2,7 @@ export LAMBDA_NAME=cloudacademy-finops-lightswitch
 export LAMBDA_REGION=us-west-2
 export IAM_ROLE_ARN=TOKEN_IAM_ROLE_ARN
 export S3_BUCKET_NAME=TOKEN_S3_BUCKET_NAME
+export AWS_ACCOUNT_ID=TOKEN_AWS_ACCOUNT_ID
 
 SHELL = bash
 
@@ -37,8 +38,11 @@ deploy: release.zip
 		--region="${LAMBDA_REGION}"
 	@echo "lambda function is active..."
 	aws events put-rule \
-		--name "${LAMBDA_NAME}-event-trigger" \
+		--name "${LAMBDA_NAME}" \
 		--schedule-expression 'rate(2 minutes)'
+	aws events put-targets \
+		--rule "${LAMBDA_NAME}" \
+		--targets "Id"="1","Arn"="arn:aws:lambda:us-west-2:4${AWS_ACCOUNT_ID}:function:${LAMBDA_NAME}"
 	@echo "lambda function is ready..."
 
 .PHONY: update
