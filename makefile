@@ -42,7 +42,13 @@ deploy: release.zip
 		--schedule-expression 'rate(2 minutes)'
 	aws events put-targets \
 		--rule "${LAMBDA_NAME}" \
-		--targets "Id"="1","Arn"="arn:aws:lambda:us-west-2:4${AWS_ACCOUNT_ID}:function:${LAMBDA_NAME}"
+		--targets "Id"="1","Arn"="arn:aws:lambda:us-west-2:${AWS_ACCOUNT_ID}:function:${LAMBDA_NAME}"
+	aws lambda add-permission \
+		--function-name "${LAMBDA_NAME}" \
+		--statement-id "${LAMBDA_NAME}-events" \
+		--action 'lambda:InvokeFunction' \
+		--principal events.amazonaws.com \
+		--source-arn "arn:aws:events:us-west-2:${AWS_ACCOUNT_ID}:rule/${LAMBDA_NAME}"
 	@echo "lambda function is ready..."
 
 .PHONY: update
