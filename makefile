@@ -1,4 +1,4 @@
-export LAMBDA_NAME=finops-lightswitch
+export LAMBDA_NAME=cloudacademy-finops-lightswitch
 export LAMBDA_REGION=us-west-2
 export IAM_ROLE_ARN=TOKEN_IAM_ROLE_ARN
 export S3_BUCKET_NAME=TOKEN_S3_BUCKET_NAME
