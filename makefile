@@ -1,7 +1,6 @@
 export LAMBDA_NAME=cloudacademy-finops-lightswitch
 export LAMBDA_REGION=us-west-2
 export IAM_ROLE_ARN=TOKEN_IAM_ROLE_ARN
-export S3_BUCKET_NAME=TOKEN_S3_BUCKET_NAME
 export AWS_ACCOUNT_ID=TOKEN_AWS_ACCOUNT_ID
 
 SHELL = bash
@@ -29,7 +28,6 @@ deploy: release.zip
 		--zip-file fileb://$< \
 		--handler lambda_function.lambda_handler \
 		--role "${IAM_ROLE_ARN}" \
-		--environment '{"Variables":{"S3_BUCKET_NAME":"${S3_BUCKET_NAME}"}}' \
 		--region "${LAMBDA_REGION}" \
 		| jq -r ".State"
 	@echo "lambda function created..."

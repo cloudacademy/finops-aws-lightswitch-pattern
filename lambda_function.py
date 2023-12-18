@@ -10,8 +10,8 @@ def lambda_handler(event, context):
     logger.info("stopping instances...")
 
     instance_filter = [
-        {'Name': 'instance-state-name', 'Values': ['running']},
-        {'Name':'tag:AutoOff', 'Values':['True']}
+        {'Name':'tag:AutoOff', 'Values':['True']},
+        {'Name': 'instance-state-name', 'Values': ['running']}
     ]
 
     instances = [i for i in ec2.instances.filter(Filters=instance_filter)]
